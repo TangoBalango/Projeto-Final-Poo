@@ -1,0 +1,49 @@
+-- Tabela de hotéis
+CREATE TABLE hotel (
+    id_hotel SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    localizacao VARCHAR(150) NOT NULL
+);
+
+-- Tabela de quartos
+CREATE TABLE quarto (
+    id_quarto SERIAL PRIMARY KEY,
+    numero INT NOT NULL,
+    tipo VARCHAR(50) NOT NULL, -- Standard, Deluxe, Suíte Familiar
+    preco DECIMAL(10,2) NOT NULL,
+    disponivel BOOLEAN DEFAULT TRUE,
+    id_hotel INT NOT NULL,
+    CONSTRAINT fk_hotel FOREIGN KEY (id_hotel) REFERENCES hotel(id_hotel)
+);
+
+-- Tabela de pessoas (superclasse Cliente/Funcionário)
+CREATE TABLE pessoa (
+    id_pessoa SERIAL PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    tipo VARCHAR(20) NOT NULL -- 'CLIENTE' ou 'FUNCIONARIO'
+);
+
+-- Tabela de clientes (subclasse de pessoa)
+CREATE TABLE cliente (
+    id_cliente INT PRIMARY KEY,
+    CONSTRAINT fk_cliente FOREIGN KEY (id_cliente) REFERENCES pessoa(id_pessoa)
+);
+
+-- Tabela de funcionários (subclasse de pessoa)
+CREATE TABLE funcionario (
+    id_funcionario INT PRIMARY KEY,
+    cargo VARCHAR(50), -- Recepcionista, Limpeza etc.
+    CONSTRAINT fk_funcionario FOREIGN KEY (id_funcionario) REFERENCES pessoa(id_pessoa)
+);
+
+-- Tabela de reservas
+CREATE TABLE reserva (
+    id_reserva SERIAL PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_quarto INT NOT NULL,
+    check_in DATE NOT NULL,
+    check_out DATE NOT NULL,
+    CONSTRAINT fk_cliente_reserva FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    CONSTRAINT fk_quarto_reserva FOREIGN KEY (id_quarto) REFERENCES quarto(id_quarto)
+);
